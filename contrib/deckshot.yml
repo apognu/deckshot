@@ -1,0 +1,21 @@
+uploader:
+  # kind: S3
+  # endpoint:
+  # region:
+  # access_key_id:
+  # secret_access_key:
+  # bucket:
+
+  # kind: GoogleDrive
+  # private_key_file:
+  # folder:
+
+  # kind: Dropbox
+  # token:
+  # folder:
+
+  # kind: OneDrive
+  # client_id:
+  # client_secret:
+  # redirect_uri:
+  # folder:

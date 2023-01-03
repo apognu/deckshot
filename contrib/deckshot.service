@@ -1,0 +1,11 @@
+[Unit]
+Description=Deckshot Screenshot Uploader
+
+[Service]
+Type=simple
+Restart=always
+WorkingDirectory=/home/deck/.local/share/deckshot
+ExecStart=/home/deck/.local/share/deckshot/deckshot
+
+[Install]
+WantedBy=default.target
