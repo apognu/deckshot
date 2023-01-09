@@ -62,7 +62,7 @@ impl Config {
 pub fn read_config(path: Option<&PathBuf>) -> Result<Config, anyhow::Error> {
   let default: PathBuf = default_deckshot_path().join("deckshot.yml");
   let path = path.unwrap_or(&default);
-  let file = std::fs::File::open(path).context("could not open configuration file")?;
+  let file = std::fs::File::open(path).context(format!("could not open configuration file: {}", path.display()))?;
 
-  serde_yaml::from_reader::<_, Config>(file).context("could not parse configuration file")
+  serde_yaml::from_reader::<_, Config>(file).context(format!("could not parse configuration file: {}", path.display()))
 }

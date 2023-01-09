@@ -36,6 +36,10 @@ impl S3Uploader {
 
 #[async_trait]
 impl Uploader for S3Uploader {
+  fn name(&self) -> &'static str {
+    "S3"
+  }
+
   async fn upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
     let dest = screenshot.dest_name().await?;
     let file = File::open(&screenshot.path).await?;

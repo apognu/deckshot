@@ -43,6 +43,8 @@ async fn main() -> Result<(), anyhow::Error> {
   let config = config::read_config(args.get_one::<PathBuf>("config"))?;
   let uploader = config.uploader().await.context("could not build uploader configuration")?;
 
+  kvlog!(Info, format!("initialized uploader: {}", uploader.name()));
+
   if args.subcommand_matches("auth").is_some() {
     uploader.auth().await?;
 
@@ -59,7 +61,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
   watcher
     .watch(Path::new(&config.screenshots_path), RecursiveMode::Recursive)
-    .context("could not watch screenshot directory")?;
+    .context(format!("could not watch screenshot directory: {}", config.screenshots_path.display()))?;
 
   let db = database::init_db(&config).context("could not initialize database")?;
 

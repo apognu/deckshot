@@ -12,6 +12,7 @@ use crate::GameScreenshot;
 
 #[async_trait]
 pub trait Uploader: Sync + Send {
+  fn name(&self) -> &'static str;
   async fn upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error>;
 
   async fn auth(&self) -> Result<(), anyhow::Error> {

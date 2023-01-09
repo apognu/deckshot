@@ -39,6 +39,10 @@ impl GoogleDriveUploader {
 
 #[async_trait]
 impl Uploader for GoogleDriveUploader {
+  fn name(&self) -> &'static str {
+    "Google Drive"
+  }
+
   async fn upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
     let filename = screenshot.file_name()?;
     let game = screenshot.game_name().await;

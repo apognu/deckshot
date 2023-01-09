@@ -85,6 +85,10 @@ impl OneDriveUploader {
 
 #[async_trait]
 impl Uploader for OneDriveUploader {
+  fn name(&self) -> &'static str {
+    "Microsoft OneDrive"
+  }
+
   async fn upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
     match self.try_upload(screenshot).await {
       Ok(screenshot) => Ok(screenshot),

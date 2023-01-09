@@ -37,6 +37,10 @@ impl DropboxUploader {
 
 #[async_trait]
 impl Uploader for DropboxUploader {
+  fn name(&self) -> &'static str {
+    "Dropbox"
+  }
+
   async fn upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
     let token = load_token(&self.config, "dropbox").await?;
     let auth = Authorization::load(self.client_id.clone(), &token).unwrap();
