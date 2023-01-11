@@ -10,7 +10,9 @@ use tokio::{
 
 use crate::config::Config;
 
-pub fn init_db(config: &Config) -> Result<Arc<Mutex<PickleDb>>, anyhow::Error> {
+pub type Db = Arc<Mutex<PickleDb>>;
+
+pub fn init_db(config: &Config) -> Result<Db, anyhow::Error> {
   let mut db = match load_db(config) {
     Ok(db) => db,
     Err(_) => create_db(config),

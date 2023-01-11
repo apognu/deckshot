@@ -15,7 +15,7 @@ impl Uploader for NoopUploader {
     "noop"
   }
 
-  async fn upload(&self, _screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
+  async fn upload<'a>(&'a self, _screenshot: &'a GameScreenshot) -> Result<&'a GameScreenshot, anyhow::Error> {
     unimplemented!();
   }
 }

@@ -41,7 +41,7 @@ impl Uploader for DropboxUploader {
     "Dropbox"
   }
 
-  async fn upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
+  async fn upload<'a>(&'a self, screenshot: &'a GameScreenshot) -> Result<&'a GameScreenshot, anyhow::Error> {
     let token = load_token(&self.config, "dropbox").await?;
     let auth = Authorization::load(self.client_id.clone(), &token).unwrap();
     let client = UserAuthDefaultClient::new(auth);

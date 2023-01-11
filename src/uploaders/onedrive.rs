@@ -44,7 +44,7 @@ impl OneDriveUploader {
     })
   }
 
-  async fn try_upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
+  async fn try_upload<'a>(&'a self, screenshot: &'a GameScreenshot) -> Result<&'a GameScreenshot, anyhow::Error> {
     let token = AccessToken::new(load_token(&self.config, "onedrive-access-token").await?);
 
     let game = screenshot.game_name().await;
@@ -89,7 +89,7 @@ impl Uploader for OneDriveUploader {
     "Microsoft OneDrive"
   }
 
-  async fn upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
+  async fn upload<'a>(&'a self, screenshot: &'a GameScreenshot) -> Result<&'a GameScreenshot, anyhow::Error> {
     match self.try_upload(screenshot).await {
       Ok(screenshot) => Ok(screenshot),
 

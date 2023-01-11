@@ -11,19 +11,17 @@ mod uploaders;
 use std::{
   env,
   path::{Path, PathBuf},
-  sync::{mpsc::channel, Arc},
+  sync::mpsc::channel,
   time::Duration,
 };
 
-use anyhow::{anyhow, Context};
+use anyhow::Context;
 use clap::{arg, value_parser, Command};
 use kvlogger::*;
 use notify::{
   event::{AccessKind, AccessMode},
   Event, EventKind, RecursiveMode, Watcher,
 };
-use pickledb::PickleDb;
-use tokio::sync::Mutex;
 
 use crate::{steam::GameScreenshot, uploaders::Uploader};
 
@@ -89,7 +87,9 @@ async fn main() -> Result<(), anyhow::Error> {
         }
 
         for (index, path) in paths.iter().enumerate() {
-          match upload(&**uploader, db.clone(), path).await {
+          let screenshot: GameScreenshot = PathBuf::from(path).as_path().into();
+
+          match screenshot.upload(&**uploader, db.clone()).await {
             Ok(screenshot) => {
               kvlog!(Info, "screenshot uploaded", {
                   "path" => screenshot.path.display(),
@@ -115,10 +115,10 @@ async fn main() -> Result<(), anyhow::Error> {
   while let Ok(event) = rx.recv() {
     if event.kind == EventKind::Access(AccessKind::Close(AccessMode::Write)) {
       for path in event.paths {
-        let lossy_path = path.as_os_str().to_string_lossy();
+        let screenshot: GameScreenshot = path.as_path().into();
 
-        if lossy_path.ends_with(".jpg") && !lossy_path.contains("thumbnail") {
-          match upload(&**uploader, db.clone(), path).await {
+        if screenshot.path.ends_with(".jpg") && !screenshot.path.to_string_lossy().contains("thumbnail") {
+          match screenshot.upload(&**uploader, db.clone()).await {
             Ok(screenshot) => {
               kvlog!(Info, "screenshot uploaded", {
                   "path" => screenshot.path.display(),
@@ -136,31 +136,6 @@ async fn main() -> Result<(), anyhow::Error> {
       }
     }
   }
-
-  Ok(())
-}
-
-async fn upload<P>(uploader: &dyn Uploader, db: Arc<Mutex<PickleDb>>, path: P) -> Result<GameScreenshot, anyhow::Error>
-where
-  P: AsRef<Path>,
-{
-  match uploader.upload(path.as_ref().into()).await {
-    Ok(screenshot) => Ok(screenshot),
-
-    Err(err) => match save(db, path).await {
-      Ok(()) => Err(err),
-      Err(save_err) => Err(save_err.context(err)),
-    },
-  }
-}
-
-async fn save<P>(db: Arc<Mutex<PickleDb>>, path: P) -> Result<(), anyhow::Error>
-where
-  P: AsRef<Path>,
-{
-  let mut db = db.lock().await;
-
-  db.ladd("screenshots", &path.as_ref().to_string_lossy()).ok_or_else(|| anyhow!("could not save screenshot"))?;
 
   Ok(())
 }

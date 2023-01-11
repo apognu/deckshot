@@ -40,7 +40,7 @@ impl Uploader for S3Uploader {
     "S3"
   }
 
-  async fn upload(&self, screenshot: GameScreenshot) -> Result<GameScreenshot, anyhow::Error> {
+  async fn upload<'a>(&'a self, screenshot: &'a GameScreenshot) -> Result<&'a GameScreenshot, anyhow::Error> {
     let dest = screenshot.dest_name().await?;
     let file = File::open(&screenshot.path).await?;
     let mut reader = BufReader::new(file);

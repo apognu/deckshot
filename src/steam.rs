@@ -7,6 +7,8 @@ use std::{
 use anyhow::anyhow;
 use serde::Deserialize;
 
+use crate::{database::Db, Uploader};
+
 #[derive(Deserialize)]
 struct GameInformationResponse {
   data: GameInformation,
@@ -43,6 +45,25 @@ impl GameScreenshot {
 
   pub async fn dest_name(&self) -> Result<PathBuf, anyhow::Error> {
     Ok(Path::new(&self.game_name().await).join(self.file_name()?))
+  }
+
+  pub async fn upload(&self, uploader: &dyn Uploader, db: Db) -> Result<&GameScreenshot, anyhow::Error> {
+    match uploader.upload(self).await {
+      Ok(_) => Ok(self),
+
+      Err(err) => match self.save(db).await {
+        Ok(()) => Err(err),
+        Err(save_err) => Err(save_err.context(err)),
+      },
+    }
+  }
+
+  pub async fn save(&self, db: Db) -> Result<(), anyhow::Error> {
+    let mut db = db.lock().await;
+
+    db.ladd("screenshots", &self.path.to_string_lossy()).ok_or_else(|| anyhow!("could not save screenshot"))?;
+
+    Ok(())
   }
 }
 
