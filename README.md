@@ -8,6 +8,7 @@ Deckshot is a service to be run on your Steam Deck that will automatically uploa
  * Google Drive
  * Dropbox
  * Microsoft OneDrive
+ * imgur
 
 It will try and find the name of the game played while the screenshot was taken and place it in an appropriately named folder. If the name of the game cannot be determined (network issue, non-Steam game, GameScope), the screenshot will be uploaded to an `UNKNOWN GAME` folder.
 
@@ -89,8 +90,21 @@ Report the values for the "Application (client) ID" (in the "Overview" tab), the
 
 ```yaml
 uploader:
+  kind: OneDrive
   client_id: <Microsoft client ID>
   client_secret: <Microsoft client secret>
   redirect_uri: <redirect URI you entered>
   folder: <name of the folder to create and use>
+```
+
+# imgur
+
+To upload your screenshots to imgur, register an OAuth 2 application [here](https://api.imgur.com/oauth2/addclient), add a dummy redirect URI, such as `http://127.0.0.1:8080/redirect`, and configure Deckshot with the provided information, run `deckshot auth` to start the authentication flow, and fill in the code from the redirect page's address bar.
+
+```yaml
+uploader:
+  kind: Imgur
+  client_id: <imgur client ID>
+  client_secret: <imgur client secret>
+  redirect_uri: <provided redirect URI>
 ```

@@ -1,5 +1,6 @@
 pub mod dropbox;
 pub mod gdrive;
+pub mod imgur;
 pub mod noop;
 pub mod onedrive;
 pub mod s3;

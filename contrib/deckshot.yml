@@ -11,7 +11,7 @@ uploader:
   # folder:
 
   # kind: Dropbox
-  # token:
+  # client_id:
   # folder:
 
   # kind: OneDrive
@@ -19,3 +19,8 @@ uploader:
   # client_secret:
   # redirect_uri:
   # folder:
+
+  # kind: Imgur
+  # client_id:
+  # client_secret:
+  # redirect_uri:

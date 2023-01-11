@@ -15,10 +15,13 @@ lto = "thin"
 [dependencies]
 anyhow = "1.0.58"
 async-trait = "0.1.60"
+base64 = "0.21.0"
 clap = "4.0.32"
 dropbox-sdk = { version = "0.15.0", default-features = false, features = ["default_client", "dbx_files"] }
 futures = "0.3.25"
 google-drive3 = "5.0.2-beta-1"
+imgurs-client = "0.2.0"
+imgurs-model = "0.2.0"
 kvlogger = "0.5.0"
 log = "*"
 notify = "5.0.0"
