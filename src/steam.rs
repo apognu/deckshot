@@ -9,6 +9,8 @@ use serde::Deserialize;
 
 use crate::{database::Db, Uploader};
 
+const APPS: &[(u64, &str)] = &[(7, "Steam UI")];
+
 #[derive(Deserialize)]
 struct GameInformationResponse {
   data: GameInformation,
@@ -30,6 +32,10 @@ impl GameScreenshot {
   }
 
   pub async fn game_name(&self) -> String {
+    if let Ok(name) = APPS.binary_search_by(|(id, _)| id.cmp(&self.game_id)).map(|id| APPS[id].1) {
+      return name.to_string();
+    }
+
     let url = format!("https://store.steampowered.com/api/appdetails?appids={}", self.game_id);
 
     if let Ok(response) = reqwest::get(url).await {
@@ -69,7 +75,7 @@ impl GameScreenshot {
 
 impl From<&Path> for GameScreenshot {
   fn from(path: &Path) -> Self {
-    let game_id = path.iter().nth(10).unwrap_or_default().to_string_lossy().parse::<u64>().unwrap_or_default();
+    let game_id = path.iter().rev().nth(2).and_then(|id| id.to_string_lossy().parse::<u64>().ok()).unwrap_or(0);
 
     GameScreenshot { game_id, path: path.to_owned() }
   }

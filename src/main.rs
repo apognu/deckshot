@@ -116,8 +116,9 @@ async fn main() -> Result<(), anyhow::Error> {
     if event.kind == EventKind::Access(AccessKind::Close(AccessMode::Write)) {
       for path in event.paths {
         let screenshot: GameScreenshot = path.as_path().into();
+        let lossy_path = screenshot.path.to_string_lossy();
 
-        if screenshot.path.ends_with(".jpg") && !screenshot.path.to_string_lossy().contains("thumbnail") {
+        if lossy_path.ends_with(".jpg") && !lossy_path.contains("thumbnail") {
           match screenshot.upload(&**uploader, db.clone()).await {
             Ok(screenshot) => {
               kvlog!(Info, "screenshot uploaded", {

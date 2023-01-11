@@ -55,5 +55,5 @@ pub async fn load_token(config: &Config, key: &str) -> Result<String, anyhow::Er
 
   file.read_to_string(&mut value).await?;
 
-  Ok(value)
+  Ok(value.trim().to_string())
 }
