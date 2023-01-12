@@ -4,6 +4,7 @@ use anyhow::Context;
 use serde::Deserialize;
 
 use crate::uploaders::{
+  discord::{DiscordConfig, DiscordUploader},
   dropbox::{DropboxConfig, DropboxUploader},
   gdrive::{GoogleDriveConfig, GoogleDriveUploader},
   imgur::{ImgurConfig, ImgurUploader},
@@ -22,6 +23,7 @@ pub enum UploaderKind {
   Dropbox(DropboxConfig),
   OneDrive(OneDriveConfig),
   Imgur(ImgurConfig),
+  Discord(DiscordConfig),
 }
 
 #[derive(Clone, Deserialize)]
@@ -56,6 +58,7 @@ impl Config {
       UploaderKind::Dropbox(ref config) => Box::new(DropboxUploader::build(self, config.clone()).await?),
       UploaderKind::OneDrive(ref config) => Box::new(OneDriveUploader::build(self, config.clone()).await?),
       UploaderKind::Imgur(ref config) => Box::new(ImgurUploader::build(self, config.clone())?),
+      UploaderKind::Discord(ref config) => Box::new(DiscordUploader::build(self, config.clone()).await?),
     };
 
     Ok(Arc::new(uploader))

@@ -1,3 +1,4 @@
+pub mod discord;
 pub mod dropbox;
 pub mod gdrive;
 pub mod imgur;

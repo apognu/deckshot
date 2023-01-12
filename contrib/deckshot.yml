@@ -24,3 +24,8 @@ uploader:
   # client_id:
   # client_secret:
   # redirect_uri:
+
+  # kind: Discord
+  # token:
+  # channel
+  # username:

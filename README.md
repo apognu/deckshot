@@ -9,6 +9,7 @@ Deckshot is a service to be run on your Steam Deck that will automatically uploa
  * Dropbox
  * Microsoft OneDrive
  * imgur
+ * Discord
 
 It will try and find the name of the game played while the screenshot was taken and place it in an appropriately named folder. If the name of the game cannot be determined (network issue, non-Steam game, GameScope), the screenshot will be uploaded to an `UNKNOWN GAME` folder.
 
@@ -107,4 +108,16 @@ uploader:
   client_id: <imgur client ID>
   client_secret: <imgur client secret>
   redirect_uri: <provided redirect URI>
+```
+
+# Discord
+
+To post every screenshot to a Discord channel, start by creating a [Discord Developer Portal](https://discord.com/developers/applications), note the "Application ID", and create bot from it. From there, generate and copy the token, and visit the authorization at [https://discordapp.com/api/oauth2/authorize?client_id=APP_ID&permissions=2048&scope=bot](https://discordapp.com/api/oauth2/authorize?client_id=APP_ID&permissions=2048&scope=bot) (replace with your application ID), select the server you wish to post your screenshot in, and you can configure Deckshot.
+
+```yaml
+uploader:
+  kind: Discord
+  token: <bot token>
+  channel: <channel ID>
+  username: <your username if you wish your screenshots to be annotated with a username>
 ```
