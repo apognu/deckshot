@@ -86,7 +86,7 @@ async fn main() -> Result<(), anyhow::Error> {
           }
         }
 
-        for (index, path) in paths.iter().enumerate() {
+        for path in paths.iter() {
           let screenshot: GameScreenshot = PathBuf::from(path).into();
 
           match screenshot.upload(&**uploader, db.clone()).await {
@@ -104,7 +104,7 @@ async fn main() -> Result<(), anyhow::Error> {
             }
           }
 
-          db.lock().await.lpop::<String>("screenshots", index);
+          let _ = db.lock().await.lrem_value("screenshots", path);
         }
 
         tokio::time::sleep(Duration::from_secs(config.retrier_interval)).await;

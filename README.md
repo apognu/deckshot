@@ -61,6 +61,8 @@ The Google Drive integration requires a service account created from the [Google
 
 To do so, note the service account email address (`xxx@yyy@iam.gserviceaccount.com`), and share the folder with that email address, with write permissions. Also note the folder ID from the URL, you will need to indicate it in the configuration.
 
+Finally, you will need to enable the [Google Drive API](https://console.cloud.google.com/marketplace/product/google/drive.googleapis.com).
+
 ```yaml
 uploader:
   kind: GoogleDrive

@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use pickledb::PickleDb;
+use pickledb::{PickleDb, SerializationMethod};
 use tokio::{
   fs::{create_dir_all, File},
   io::{AsyncReadExt, AsyncWriteExt},
@@ -26,14 +26,14 @@ pub fn init_db(config: &Config) -> Result<Db, anyhow::Error> {
 }
 
 fn create_db(config: &Config) -> PickleDb {
-  PickleDb::new(config.deckshot_path.join("deckshot.db"), pickledb::PickleDbDumpPolicy::AutoDump, pickledb::SerializationMethod::Json)
+  PickleDb::new(config.deckshot_path.join("deckshot.db"), pickledb::PickleDbDumpPolicy::AutoDump, SerializationMethod::Bin)
 }
 
 fn load_db(config: &Config) -> Result<PickleDb, anyhow::Error> {
   Ok(PickleDb::load(
     config.deckshot_path.join("deckshot.db"),
     pickledb::PickleDbDumpPolicy::AutoDump,
-    pickledb::SerializationMethod::Json,
+    SerializationMethod::Bin,
   )?)
 }
 

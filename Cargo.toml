@@ -27,7 +27,7 @@ log = "*"
 notify = "5.0.0"
 oauth2 = "4.3.0"
 onedrive-api = { version = "0.9.0", default-features = false }
-pickledb = "0.5.1"
+pickledb = { version = "0.5.1", default-features = false, features = ["bincode"] }
 reqwest = { version = "0.11.13", default-features = false, features = ["rustls-tls"] }
 rust-s3 = {version = "0.32.3", default-features = false, features = ["tokio-rustls-tls"] }
 serde = "^1.0"
@@ -35,5 +35,6 @@ serde_json = "^1.0"
 serde_yaml = "0.9.16"
 serenity = { version = "0.11", default-features = false, features = ["builder", "client", "gateway", "http", "model", "rustls_backend"] }
 tokio = { version = "^1.23", features = ["macros", "rt-multi-thread", "sync", "io-util"] }
-
 rand = "0.8.5"
+
+[dev-dependencies]
