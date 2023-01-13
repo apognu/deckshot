@@ -38,7 +38,7 @@ impl Uploader for DiscordUploader {
   async fn upload<'a>(&'a self, screenshot: &'a GameScreenshot) -> Result<&'a GameScreenshot, anyhow::Error> {
     let game_name = screenshot.game_name().await;
 
-    let http = self.client.cache_and_http.http.clone();
+    let http = &self.client.cache_and_http.http;
     let channel = ChannelId(self.channel);
 
     let text = match self.username {
@@ -46,7 +46,7 @@ impl Uploader for DiscordUploader {
       None => format!("New screenshot from {game_name}"),
     };
 
-    channel.send_message(&http, |message| message.content(text).add_file(screenshot.path.as_path())).await?;
+    channel.send_message(http, |message| message.content(text).add_file(screenshot.path.as_path())).await?;
 
     Ok(screenshot)
   }
