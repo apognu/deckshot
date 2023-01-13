@@ -73,8 +73,12 @@ impl GameScreenshot {
   }
 }
 
-impl From<&Path> for GameScreenshot {
-  fn from(path: &Path) -> Self {
+impl<P> From<P> for GameScreenshot
+where
+  P: AsRef<Path>,
+{
+  fn from(path: P) -> Self {
+    let path = path.as_ref();
     let game_id = path.iter().rev().nth(2).and_then(|id| id.to_string_lossy().parse::<u64>().ok()).unwrap_or(0);
 
     GameScreenshot { game_id, path: path.to_owned() }

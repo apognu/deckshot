@@ -87,7 +87,7 @@ async fn main() -> Result<(), anyhow::Error> {
         }
 
         for (index, path) in paths.iter().enumerate() {
-          let screenshot: GameScreenshot = PathBuf::from(path).as_path().into();
+          let screenshot: GameScreenshot = PathBuf::from(path).into();
 
           match screenshot.upload(&**uploader, db.clone()).await {
             Ok(screenshot) => {
@@ -115,7 +115,7 @@ async fn main() -> Result<(), anyhow::Error> {
   while let Ok(event) = rx.recv() {
     if event.kind == EventKind::Access(AccessKind::Close(AccessMode::Write)) {
       for path in event.paths {
-        let screenshot: GameScreenshot = path.as_path().into();
+        let screenshot: GameScreenshot = path.into();
         let lossy_path = screenshot.path.to_string_lossy();
 
         if lossy_path.ends_with(".jpg") && !lossy_path.contains("thumbnail") {

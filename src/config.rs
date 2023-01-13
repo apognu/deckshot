@@ -66,7 +66,7 @@ impl Config {
 }
 
 pub fn read_config(path: Option<&PathBuf>) -> Result<Config, anyhow::Error> {
-  let default: PathBuf = default_deckshot_path().join("deckshot.yml");
+  let default = default_deckshot_path().join("deckshot.yml");
   let path = path.unwrap_or(&default);
   let file = std::fs::File::open(path).context(format!("could not open configuration file: {}", path.display()))?;
 
