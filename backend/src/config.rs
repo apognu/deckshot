@@ -38,7 +38,7 @@ pub struct Config {
 }
 
 fn default_deckshot_path() -> PathBuf {
-  "/home/deck/.local/share/deckshot".into()
+  "/home/deck/.config/deckshot".into()
 }
 
 fn default_screenshot_path() -> PathBuf {

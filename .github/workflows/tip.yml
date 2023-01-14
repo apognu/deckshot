@@ -13,8 +13,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
-          path: target/
-          key: cargo-clippy-cache-${{ matrix.arch.target }}
+          path: backend/target/
+          key: cargo-clippy-cache
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly-2023-01-08
@@ -23,21 +23,18 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
+          args: --manifest-path backend/Cargo.toml
 
-  build:
+  build_backend:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    strategy:
-      matrix:
-        arch:
-          - { name: 'x86_64', os: 'ubuntu-20.04', target: 'x86_64-unknown-linux-gnu', cross: false }
-    runs-on: ${{ matrix.arch.os }}
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
         with:
           path: |
-            target/
-          key: cargo-build-cache-${{ matrix.arch.target }}
+            backend/target/
+          key: cargo-build-cache
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: nightly-2023-01-08
@@ -46,28 +43,55 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release --all-features --target=${{ matrix.arch.target }}
-          use-cross: ${{ matrix.arch.cross }}
-        env:
-          JQ_LIB_DIR: /usr/lib/x86_64-linux-gnu
-      - name: Rename artifact
-        run: |
-          mv target/${{ matrix.arch.target }}/release/deckshot target/${{ matrix.arch.target }}/release/deckshot-tip-${{ matrix.arch.name }}
+          args: --release --manifest-path backend/Cargo.toml
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: deckshot-tip-${{ matrix.arch.name }}
+          name: backend
+          path: backend/target/release/deckshot
+
+  build_frontend:
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.24.3
+          run_install: true
+      - run: pnpm run build
+      - run: mv defaults/deckshot.yml .
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend
           path: |
-            target/${{ matrix.arch.target }}/release/deckshot-tip-${{ matrix.arch.name }}
+            plugin.json
+            main.py
+            deckshot.yml
+            package.json
+            dist/
+            LICENSE
 
   package:
     runs-on: ubuntu-20.04
-    needs: [clippy, build]
+    needs: [clippy, build_backend, build_frontend]
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
-          path: target/out
+          name: backend
+          path: bin/
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend
+      - run: |
+          mkdir deckshot
+          find . -mindepth 1 -maxdepth 1 -not -name deckshot | xargs mv -t deckshot/
+      - uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r deckshot.zip .
       - name: Create release
         uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -75,4 +99,4 @@ jobs:
           automatic_release_tag: tip
           title: Development build
           prerelease: true
-          files: target/out/*/*
+          files: deckshot.zip

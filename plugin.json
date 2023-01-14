@@ -1,0 +1,14 @@
+{
+  "name": "Deckshot",
+  "author": "Antoine POPINEAU",
+  "flags": [
+    "debug"
+  ],
+  "publish": {
+    "tags": [
+      "screenshot"
+    ],
+    "description": "Automatic screenshot uploader for the Steam Deck",
+    "image": "https://opengraph.githubassets.com/1/apognu/deckshot"
+  }
+}

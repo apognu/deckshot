@@ -17,26 +17,16 @@ It maintains an internal (and simple) database storing the screenshots that fail
 
 ## Installation
 
-```shell
-# Install with
-deck$ curl -sL https://raw.githubusercontent.com/apognu/deckshot/master/contrib/install.sh | sh
-
-# Uninstall with
-deck$ curl -sL https://raw.githubusercontent.com/apognu/deckshot/master/contrib/uninstall.sh | sh
-```
+This tool is now installed through Decky and configured through a terminal (SSH or Desktop mode). Running it for the first time will create `/home/deck/.config/deckshot` and copy the template configuration file there.
 
 ## Configuration
 
-Deckshot is confiured by editing `/home/deck/.local/share/deckshot/deckshot.yml`. The only required configuration settings are the one defining the uploader to use. When you edit the configuration, restart deckshot by issuing the following command:
-
-```shell
-deck$ systemctl --user restart deckshot
-```
+Deckshot is configured by editing `/home/deck/.config/deckshot/deckshot.yml`. The only required configuration settings are the one defining the uploader to use. When you edit the configuration, restart deckshot by using the Decky plugin UI.
 
 The upload providers requiring an interactive authentication process (open a browser for instance) can be configured by running the `auth` command once the configuration file is updated accordingly.
 
 ```shell
-deck$ /home/deck/.local/share/deckshot/deckshot auth
+deck$ /home/deck/homebrew/plugins/deckshot/bin/deckshot auth
 ```
 
 Here are the required parameters per uploader:
