@@ -35,6 +35,7 @@ Thumbs.db
 # Ignore built ts files
 dist/
 
+/.venv/
 __pycache__/
 
 /.yalc

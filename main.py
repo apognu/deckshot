@@ -1,17 +1,27 @@
 import asyncio
 import os
 import pathlib
+import logging
 import shutil
 import subprocess
+import sys
 
 PLUGIN_DIR = pathlib.Path(__file__).parent.resolve()
 CONFIG_DIR = pathlib.Path("/home/deck/.config/deckshot")
 CONFIG_FILE = CONFIG_DIR / "deckshot.yml"
 
-PROCESS = None
+sys.path.insert(0, str(PLUGIN_DIR / "py_modules"))
+
+import yaml
+
+
+def log(message):
+    logging.info(f"[deckshot] {message}")
 
 
 class Plugin:
+    process = None
+
     async def _main(self):
         os.makedirs(CONFIG_DIR, exist_ok=True)
 
@@ -19,7 +29,10 @@ class Plugin:
             shutil.copyfile(PLUGIN_DIR / "deckshot.yml", CONFIG_FILE)
             os.chmod(CONFIG_FILE, 0o0600)
 
-        await self.start(self)
+        config = await self.get_config(self)
+
+        if config and config.get("enabled", True):
+            await self.start(self)
 
         while True:
             await asyncio.sleep(1)
@@ -28,10 +41,10 @@ class Plugin:
         await self.stop(self)
 
     async def start(self):
-        global PROCESS
-
         if not await self.is_running(self):
-            PROCESS = subprocess.Popen(
+            log("starting backend service")
+
+            self.process = subprocess.Popen(
                 [
                     str(PLUGIN_DIR / "bin" / "deckshot"),
                     "-c",
@@ -40,23 +53,34 @@ class Plugin:
             )
 
     async def stop(self):
-        global PROCESS
-
         if await self.is_running(self):
-            PROCESS.terminate()
+            log("stopping backend service")
 
-        PROCESS = None
+            self.process.terminate()
+
+        self.process = None
 
     async def toggle(self):
+        config = await self.get_config(self)
+        config["enabled"] = not await self.is_running(self)
+
+        await self.write_config(self, config)
+
         if await self.is_running(self):
             await self.stop(self)
         else:
             await self.start(self)
 
     async def is_running(self):
-        global PROCESS
-
-        if PROCESS is None:
+        if self.process is None:
             return False
 
-        return PROCESS.poll() is None
+        return self.process.poll() is None
+
+    async def get_config(self):
+        with open(CONFIG_FILE) as f:
+            return yaml.safe_load(f)
+
+    async def write_config(self, config):
+        with open(CONFIG_FILE, "w") as fw:
+            yaml.safe_dump(config, fw)
