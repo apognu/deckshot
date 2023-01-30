@@ -19,7 +19,7 @@ base64 = "0.21.0"
 clap = "4.0.32"
 dropbox-sdk = { version = "0.15.0", default-features = false, features = ["default_client", "dbx_files"] }
 futures = "0.3.25"
-google-drive3 = "5.0.2-beta-1"
+google-drive3 = { git = "https://github.com/Byron/google-apis-rs", rev = "62d49d5d178124ef0706302bb712713b3103ccb4" }
 imgurs-client = "0.2.0"
 imgurs-model = "0.2.0"
 kvlogger = "0.5.0"
